@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "module": "ESNext",
+      "target": "ES6",
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "strict": true,
+      "baseUrl": "./app/src",
+      "paths": {
+        "*": ["*", "../assets/*"]
+      }
+    },
+    "include": ["app/src", "./images.d.ts"]
+  }

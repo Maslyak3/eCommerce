@@ -1,0 +1,42 @@
+{
+    "name": "my-shop",
+    "version": "1.0.0",
+    "description": "Простий інтернет-магазин на TypeScript",
+    "main": "dist/bundle.js",
+    "scripts": {
+        "prepare": "husky install",
+        "build": "webpack",
+        "start": "webpack serve",
+        "lint": "eslint \"app/src/**/*.{ts,tsx}\"",
+        "format": "prettier --write \"app/src/**/*.{ts,tsx,js,json,css,md}\""
+    },
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "@eslint/js": "^9.26.0",
+        "@types/node": "^22.15.17",
+        "@typescript-eslint/eslint-plugin": "^8.32.0",
+        "@typescript-eslint/parser": "^8.32.0",
+        "css-loader": "^7.1.2",
+        "eslint": "^9.26.0",
+        "eslint-config-prettier": "^10.1.2",
+        "eslint-plugin-prettier": "^5.4.0",
+        "html-webpack-plugin": "^5.6.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^15.5.1",
+        "prettier": "^3.5.3",
+        "style-loader": "^4.0.0",
+        "ts-loader": "^9.5.2",
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.32.0",
+        "webpack": "^5.91.0",
+        "webpack-cli": "^5.1.4",
+        "webpack-dev-server": "^4.15.0"
+    },
+    "lint-staged": {
+        "app/src/**/*.{ts,tsx,js,css,md,json}": [
+            "prettier --write",
+            "eslint --fix"
+        ]
+    }
+}

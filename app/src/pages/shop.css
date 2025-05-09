@@ -1,0 +1,17 @@
+.wrapper {
+    display: flex;
+    color: blue;
+    width: 100%;
+    font-size: 36px;
+    margin-top: 100px;
+}
+
+.sidebar {
+    text-align: center;
+    flex-grow: 1;
+}
+
+.main-section {
+    text-align: center;
+    flex-grow: 2;
+}

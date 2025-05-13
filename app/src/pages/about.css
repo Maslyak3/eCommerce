@@ -1,0 +1,72 @@
+
+.about-wrap {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 40px;
+    background-color: #f5f1ea; /* світлий фон */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #3d2b1f;
+    flex-wrap: wrap;
+}
+
+.stat-cards {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    gap: 20px;
+}
+
+.about-text {
+    width: 60%;
+    max-width: 600px;
+  font-size: 16px;
+  line-height: 1.6;
+  background-color: #fffaf3;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.about-card {
+background-color: #fffaf3;
+  border: 1px solid #d6c4b4;
+  border-left: 5px solid #b08b64; /* акцент */
+  border-radius: 8px;
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  font-weight: bold;
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+.about-card:hover {
+    transform: scale(1.02);
+  }
+
+  @media (max-width: 900px) {
+    .about-wrap {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .about-text, .stat-cards {
+      width: 90%;
+      max-width: none;
+    }
+  }
+.to-shop-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #d2b48c;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.to-shop-btn :hover {
+    background-color: #b2956b;
+}

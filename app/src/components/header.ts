@@ -1,3 +1,4 @@
+import { renderLoginPage } from '../pages/login';
 import logoPath from '../../assets/logo.png';
 
 import { renderAboutPage } from "../pages/about";
@@ -42,6 +43,7 @@ export const header = function() {
     navBar.append(cartNavBtn);
     headerElement.append(navBar)
 
+    loginNavBtn.addEventListener("click", renderLoginPage);
     shopNavBtn.addEventListener("click", renderShopPage);
     aboutNavBtn.addEventListener("click", renderAboutPage);
     contactsNavBtn.addEventListener("click", renderContactsPage);

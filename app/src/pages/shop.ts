@@ -2,6 +2,7 @@ import { mainDiv } from "./login";
 import "./shop.css"
 
 export function renderShopPage () {
+    mainDiv.textContent = "";
     const categoryLine = document.createElement('div');
     categoryLine.className = "category-line";
     categoryLine.textContent = " Категорії товарів"

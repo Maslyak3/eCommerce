@@ -1,0 +1,64 @@
+.contacts-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 40px;
+    background-color: #f5f1ea; /* світлий беж */
+    color: #3d2b1f;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.contacts-details {
+    max-width: 500px;
+    display: flex;
+    gap: 40px;
+    background-color: #fffaf3; /* трохи світліше */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.contacts-details img {
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+  vertical-align: middle;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.contact-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.contacts-details img:hover {
+    transform: scale(1.1);
+}
+
+.contacts-details div {
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.contacts-map iframe {
+    border: 2px solid #d8cfc1;
+    border-radius: 10px;
+    width: 600px;
+    height: 350px;
+}
+
+@media (max-width: 768px) {
+    .contacts-wrap {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .contacts-map iframe {
+      width: 100%;
+      height: 300px;
+    }
+  }

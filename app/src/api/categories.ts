@@ -3,19 +3,19 @@ import { getAccessToken } from "./auth";
 const API_URL = 'https://api.europe-west1.gcp.commercetools.com';
 const PROJECT_KEY = 'microworld';
 
-export async function fetchProducts(): Promise<any[]> {
+
+export async function fetchCategories(): Promise<any[]> {
     const token = await getAccessToken();
 
-    const response = await fetch(`${API_URL}/${PROJECT_KEY}/products`, {
+    const response = await fetch(`${API_URL}/${PROJECT_KEY}/categories`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
     });
-
     if (!response.ok) {
-        throw new Error('Failde to fetch products');
+        throw new Error("Unable to fetch categories");
     }
     const data = await response.json();
-    console.log("Products response:", data);
+    console.log("Categories response:", data);
     return data.results;
 }

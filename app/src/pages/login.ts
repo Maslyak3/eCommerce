@@ -1,3 +1,4 @@
+import { getAccessToken } from "../api/auth";
 import { footer } from "../components/footer";
 import { header } from "../components/header";
 import "./login.css";
@@ -37,5 +38,11 @@ export function renderLoginPage() {
     mainDiv.style.backgroundColor = "#fff2e6";
 
     footer();
+
+    submitBtn.addEventListener('click', (event) => {
+        event?.preventDefault()
+        console.log(`Login: ${loginInput.value}, Pasword: ${pswdInput.value}`)
+        getAccessToken()
+    });
 
 }

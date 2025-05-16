@@ -4,7 +4,6 @@ const CLIENT_SECRET = 'NWn08A9UZmhDBBCRpi50OO2qFITX2tZ-';
 const SCOPE = 'manage_project:microworld';
 
 export async function getAccessToken(): Promise<string> {
-    console.log("GetAccessToken запускається")
     const credentials = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
 
     const response = await fetch(AUTH_URL, {
@@ -20,6 +19,7 @@ export async function getAccessToken(): Promise<string> {
     }
     const data = await response.json();
     return data.access_token;
+
 
     
 }

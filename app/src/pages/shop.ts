@@ -24,6 +24,7 @@ export async function renderShopPage () {
     try {
         const categories = await fetchCategories();
         const categoryList = document.createElement('ul');
+        categoryList.className = "category-list";
         categories.forEach((category) => {
             const li = document.createElement('li');
             li.innerHTML = category.name["en-GB"];
@@ -38,14 +39,13 @@ export async function renderShopPage () {
     try {
         const products = await fetchProducts();
         mainSection.textContent = "";
-        // const productList = document.createElement('ul');
-
+        
         products.forEach((product) => {
             const productCard = document.createElement('div');
             productCard.innerHTML = product.masterData.current.name["en-GB"];
             mainSection.appendChild(productCard);
         });
-        // mainSection.append(productList);
+        
     } catch (e) {
         mainSection.textContent = "Помилка завантаження товарів";
         console.error(e);

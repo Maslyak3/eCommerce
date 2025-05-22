@@ -5,6 +5,7 @@ import { renderAboutPage } from "../pages/about";
 import { renderCartPage } from "../pages/cart";
 import { renderContactsPage } from "../pages/contacts";
 import { renderShopPage } from "../pages/shop";
+import { renderProfilePage } from '../pages/client-profile';
 
 export const header = function() {
     const headerElement = document.createElement('section');
@@ -18,20 +19,36 @@ export const header = function() {
     const loginNavBtn = document.createElement('li');
     loginNavBtn.setAttribute("id", "login-button");
     loginNavBtn.textContent = 'Login';
+
     const shopNavBtn = document.createElement('li');
     shopNavBtn.setAttribute("id", "shop-button");
     shopNavBtn.textContent = 'Shop';
+
     const aboutNavBtn = document.createElement('li');
     aboutNavBtn.setAttribute("id", "about-button");
     aboutNavBtn.textContent = 'About';
+
     const contactsNavBtn = document.createElement('li');
     contactsNavBtn.setAttribute("id", "contacts-button");
     contactsNavBtn.textContent = 'Contacts';
+
     const cartNavBtn = document.createElement('li');
     cartNavBtn.setAttribute("id", "cart-button");
     cartNavBtn.textContent = 'Cart';
 
+    const profileNavBtn = document.createElement('li');
+    profileNavBtn.setAttribute("id", "profile-button");
+    profileNavBtn.textContent = 'My profile';
 
+    const isLoggedIn = localStorage.getItem("userLogin") && localStorage.getItem("userPassword");
+
+    if (isLoggedIn) {
+        loginNavBtn.style.display = "none";
+        profileNavBtn.style.display = "block"
+    } else {
+        loginNavBtn.style.display = "block";
+        profileNavBtn.style.display = "none"
+    };
 
     document.body.append(headerElement);
     headerElement.append(logo);
@@ -41,13 +58,15 @@ export const header = function() {
     navBar.append(aboutNavBtn);
     navBar.append(contactsNavBtn);
     navBar.append(cartNavBtn);
-    headerElement.append(navBar)
+    navBar.append(profileNavBtn);
+    headerElement.append(navBar);
 
     loginNavBtn.addEventListener("click", renderLoginPage);
     shopNavBtn.addEventListener("click", renderShopPage);
     aboutNavBtn.addEventListener("click", renderAboutPage);
     contactsNavBtn.addEventListener("click", renderContactsPage);
     cartNavBtn.addEventListener("click", renderCartPage);
+    profileNavBtn.addEventListener("click", renderProfilePage);
 
 
     

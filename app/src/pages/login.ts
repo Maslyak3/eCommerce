@@ -1,10 +1,11 @@
-import { getAccessToken } from "../api/auth";
+import { CLIENT_ID, CLIENT_SECRET, getAccessToken } from "../api/auth";
 import { footer } from "../components/footer";
 import { header } from "../components/header";
 import "./login.css";
 import { renderShopPage } from "./shop";
 
 export const mainDiv = document.createElement('div');
+export const loginInput = document.createElement("input");
 mainDiv.className = "main-div";
 
 export function renderLoginPage() {
@@ -17,9 +18,8 @@ export function renderLoginPage() {
     loginForm.className = 'login-form';
     loginForm.textContent = "register or login";
 
-    const loginInput = document.createElement("input");
     loginInput.className = "input-field";
-    loginInput.placeholder = "Login";
+    loginInput.placeholder = "E-mail";
 
     const pswdInput = document.createElement("input");
     pswdInput.className = "input-field";
@@ -29,15 +29,17 @@ export function renderLoginPage() {
     submitBtn.textContent = 'Submit';
     submitBtn.className = "submit-button";
 
+    const registerBtn = document.createElement("button");
+    registerBtn.textContent = "Register";
+    
     loginForm.append(loginInput);
     loginForm.append(pswdInput);
     loginForm.append(submitBtn);
+    loginForm.append(registerBtn);
     mainDiv.append(loginForm);
     
     document.body.append(mainDiv)
-    // mainDiv.style.height = "400px";
-    // mainDiv.style.backgroundColor = "#fff2e6";
-
+    
     const loginError = document.createElement('div');
     loginError.style.color = "red";
 
@@ -45,7 +47,7 @@ export function renderLoginPage() {
     passwordError.style.color = "red";
 
     loginForm.append(loginError);
-loginForm.append(passwordError);
+    loginForm.append(passwordError);
 
     function validateLogin(value: string): string | null {
         if (value.length < 4) return "Login must be at least 4 characters long";
@@ -62,7 +64,7 @@ loginForm.append(passwordError);
 
     footer();
 
-    submitBtn.addEventListener('click', (event) => {
+    submitBtn.addEventListener('click', async (event) => {
         event?.preventDefault()
 
         const login = loginInput.value.trim();
@@ -70,17 +72,47 @@ loginForm.append(passwordError);
 
         const loginValidation = validateLogin(login);
         const passwordValidation = validatePassword(password);
-
+        
         if (!loginValidation && !passwordValidation) {
-            renderShopPage();
-            getAccessToken();
-        } else {displayError("Please fix the errors above.")};
+               localStorage.setItem("UserLogin", login);
+                localStorage.setItem("UserPassword", password);
+            try {
+                const token = await getAccessToken(login, password);
+                localStorage.setItem("accessToken", token);
 
-        loginError.textContent = loginValidation ?? "";
+            await renderShopPage();
+        } catch (err) {
+            displayError("Please fix the errors above.");
+            console.error(err);
+            }
+        } else {displayError("Please fix the errors above.");
+    }
+    loginError.textContent = loginValidation ?? "";
         passwordError.textContent = passwordValidation ?? "";
-
-                
+                        
     });
+
+    registerBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        const email = loginInput.value;
+        const password = pswdInput.value;
+
+        const response = await fetch('https://auth.europe-west1.gcp.commercetools.com/oauth/microworld/customers', {
+            method: "POST",
+            headers: {
+                Authorization: "Basic" + btoa(`${CLIENT_ID}:${CLIENT_SECRET}`),
+                "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+                email,
+                password,
+            }),
+        }
+        );
+
+
+    })
 
 }
 

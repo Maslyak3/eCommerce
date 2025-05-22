@@ -3,6 +3,7 @@ import { renderAboutPage } from '../pages/about';
 import { renderCartPage } from '../pages/cart';
 import { renderContactsPage } from '../pages/contacts';
 import { renderLoginPage } from '../pages/login';
+import { renderProfilePage } from '../pages/client-profile';
 
 export function initRouter() {
     window.addEventListener('hashchange', handleRouteChange);
@@ -22,6 +23,9 @@ export function initRouter() {
           break;
         case 'contacts':
           renderContactsPage();
+          break;
+        case 'profile':
+          renderProfilePage();
           break;
         default:
           renderLoginPage();

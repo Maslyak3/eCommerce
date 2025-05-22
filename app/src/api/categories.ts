@@ -5,7 +5,7 @@ const PROJECT_KEY = 'microworld';
 
 
 export async function fetchCategories(): Promise<any[]> {
-    const token = await getAccessToken();
+    const token = localStorage.getItem("accessToken");
 
     const response = await fetch(`${API_URL}/${PROJECT_KEY}/categories`, {
         headers: {

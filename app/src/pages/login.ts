@@ -50,8 +50,9 @@ export function renderLoginPage() {
     loginForm.append(passwordError);
 
     function validateLogin(value: string): string | null {
-        if (value.length < 4) return "Login must be at least 4 characters long";
-        if (!/^[a-zA-Z0-9]+$/.test(value)) return "Login must contain only letters and numbers.";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            return "Login must be a valid email address.";
+        }
         return null;
     }
 
@@ -95,13 +96,39 @@ export function renderLoginPage() {
     registerBtn.addEventListener("click", async (e) => {
         e.preventDefault();
 
-        const email = loginInput.value;
+        const email = loginInput.value.trim();
         const password = pswdInput.value;
 
-        const response = await fetch('https://auth.europe-west1.gcp.commercetools.com/oauth/microworld/customers', {
+        const loginValidation = validateLogin(email);
+        const passwordValidation = validatePassword(password);
+
+        if (loginValidation || passwordValidation) {
+            loginError.textContent = loginValidation ?? "";
+            passwordError.textContent = passwordValidation ?? "";
+            displayError("Please fix the errors above.");
+            return;
+        }
+
+        try {
+
+            const tokenResponse = await fetch(`https://auth.europe-west1.gcp.commercetools.com/oauth/token`, {
+                method: "POST",
+                headers: {
+                    Authorization: "Basic " + btoa(`${CLIENT_ID}:${CLIENT_SECRET}`),
+                    "Content-type": "application/x-www-form-urlencoded",
+                },
+                body: "grant_type=client_credentials",
+            });
+
+            if (!tokenResponse.ok) throw new Error("Failed to get token");
+            const tokenData = await tokenResponse.json();
+            const accessToken = tokenData.access_token;
+
+
+        const response = await fetch('https://api.europe-west1.gcp.commercetools.com/microworld/customers', {
             method: "POST",
             headers: {
-                Authorization: "Basic" + btoa(`${CLIENT_ID}:${CLIENT_SECRET}`),
+                Authorization: `Bearer ${accessToken}`,
                 "Content-type": "application/json",
             },
             body: JSON.stringify({
@@ -110,8 +137,21 @@ export function renderLoginPage() {
             }),
         }
         );
+        if (!response.ok) {
+            console.error("Failed to register");
+            return;
+        }
+        localStorage.setItem("UserLogin", email);
+        localStorage.setItem("userPassword", password);
 
+        const userToken = await getAccessToken(email, password);
+        localStorage.setItem("accessToken", userToken);
 
+        await renderShopPage();
+    } catch (err) {
+            displayError("Registration failed");
+            console.error(err);
+        }
     })
 
 }

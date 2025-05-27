@@ -40,7 +40,7 @@ export const header = function() {
     profileNavBtn.setAttribute("id", "profile-button");
     profileNavBtn.textContent = 'My profile';
 
-    const isLoggedIn = localStorage.getItem("userLogin") && localStorage.getItem("userPassword");
+    const isLoggedIn = localStorage.getItem("UserLogin") && localStorage.getItem("UserPassword");
 
     if (isLoggedIn) {
         loginNavBtn.style.display = "none";

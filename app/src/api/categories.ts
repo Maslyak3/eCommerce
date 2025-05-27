@@ -16,6 +16,5 @@ export async function fetchCategories(): Promise<any[]> {
         throw new Error("Unable to fetch categories");
     }
     const data = await response.json();
-    console.log("Categories response:", data);
     return data.results;
 }

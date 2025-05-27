@@ -20,9 +20,9 @@ export async function renderProfilePage() {
     });
 
     const user = await response.json();
-
+    const login = localStorage.getItem("UserLogin");
     const clientName = document.createElement('div');
-    clientName.innerHTML = `${user.firstName}`;
+    clientName.innerHTML = login ?? "Unknown user";
     clientName.className = "profile-inputs";
 
     const clientPhone = document.createElement('input');
@@ -40,6 +40,13 @@ export async function renderProfilePage() {
     const shippingStreet = document.createElement("input");
     const shippingBuilding = document.createElement("input");
 
+    const divCity = document.createElement("div");
+    divCity.className = "adress-div";
+    const divStreet = document.createElement("div");
+    divStreet.className = "adress-div";
+    const divBuilding = document.createElement("div");
+    divBuilding.className = "adress-div";
+
     const labelEmail = document.createElement("label");
     labelEmail.textContent = "Ваш email:";
     labelEmail.className = "profile-inputs";
@@ -55,6 +62,54 @@ export async function renderProfilePage() {
     const labelBuilding = document.createElement("label");
     labelBuilding.textContent = "Будинок/Квартира:";
     labelBuilding.className = "profile-inputs";
+    const saveAdressBtn = document.createElement("button");
+    saveAdressBtn.textContent = "Зберегти адресу";
+    saveAdressBtn.className = "submit-button";
+
+    const customerId = user.id;
+    const version = user.version;
+
+    const address = {
+        country: "UA",
+        city: shippingCity.value,
+        streetName: shippingStreet.value,
+        building: shippingBuilding.value,
+      };
+
+    saveAdressBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        if (shippingCity.value && shippingStreet.value && shippingBuilding.value) {
+            
+            labelCity.style.display = "none";
+            labelStreet.style.display = "none";
+            labelBuilding.style.display = "none";
+
+            divCity.textContent = `Місто/Село: ${shippingCity.value}`;
+            divStreet.textContent = `Вулиця: ${shippingCity.value}`;
+            divBuilding.textContent = `Будинок/Квартира: ${shippingBuilding.value}`;
+
+            shippingAddress.append(divCity);
+            shippingAddress.append(divStreet);
+            shippingAddress.append(divBuilding);
+            saveAdressBtn.textContent = "Змінити адресу";
+
+            await fetch(`https://api.europe-west1.gcp.commercetools.com/microworld/customers/${customerId}`, {
+               method: "POST",
+               headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-type": "application/json",
+               },
+               body: JSON.stringify({
+                version,
+                actions: [{
+                    action: "addAddress",
+                    address,
+                },],
+               }),
+            });
+        }
+        
+    })
 
     labelEmail.append(clientEmail);
     labelPhone.append(clientPhone);
@@ -64,7 +119,8 @@ export async function renderProfilePage() {
 
     shippingAddress.append(labelCity,
         labelStreet,
-        labelBuilding);
+        labelBuilding,
+        saveAdressBtn);
 
     mainDiv.append(clientName,
         labelPhone,

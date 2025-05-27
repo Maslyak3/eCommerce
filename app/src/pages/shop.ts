@@ -1,21 +1,61 @@
 import { mainDiv } from "./login";
 import "./shop.css"
-import { fetchProducts } from "../api/products";
+import { fetchProducts, fetchProductsByCategory } from "../api/products";
 import { fetchCategories } from "../api/categories";
+import { renderPriceControls } from "../components/side-bar";
 
+export const renderProducts = async (products: any[]) => {
+    const mainSection = document.querySelector('.main-section') as HTMLElement;
+    mainSection.textContent = "";
+    products.forEach((product) => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        const productName = product.masterData.current.name["en-GB"];
+            const imageUrl = product.masterData.current.masterVariant.images?.[0]?.url;
+            const price = product.masterData.current.masterVariant.prices?.[0]?.value;
+
+            const image = document.createElement('img');
+            image.src = imageUrl ?? "";
+            image.alt = productName;
+            image.className = "product-image";
+
+            const nameElement = document.createElement("h3");
+            nameElement.textContent = productName;
+            const priceElement = document.createElement("p");
+            priceElement.textContent = price
+            ? `${price.centAmount / 100} ${price.currencyCode}`
+            : "Ціна недоступна";
+
+            productCard.appendChild(image);
+            productCard.appendChild(nameElement);
+            productCard.appendChild(priceElement);
+
+            mainSection.appendChild(productCard);
+
+    })
+}
+
+export const sideBar = document.createElement('div');
+    sideBar.className = "sidebar";
 
 export async function renderShopPage () {
     mainDiv.textContent = "";
+
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+        console.error("Access token is missing. Please login first.");
+        mainDiv.textContent = "Помилка: відсутній токен доступу. Увійдіть у систему.";
+        return;
+    }
+    
     const categoryLine = document.createElement('div');
     categoryLine.className = "category-line";
-    categoryLine.textContent = " Категорії товарів"
+    categoryLine.textContent = ""
         
     const wrapper = document.createElement('div');
     wrapper.className = "wrapper";
     
-    const sideBar = document.createElement('div');
-    sideBar.className = "sidebar";
-    sideBar.textContent = "Бокове меню"
+    await renderPriceControls()
 
     const mainSection = document.createElement('div');
     mainSection.className = "main-section";
@@ -25,9 +65,22 @@ export async function renderShopPage () {
         const categories = await fetchCategories();
         const categoryList = document.createElement('ul');
         categoryList.className = "category-list";
+
         categories.forEach((category) => {
             const li = document.createElement('li');
             li.innerHTML = category.name["en-GB"];
+
+            li.addEventListener("click", async() => {
+                mainSection.textContent = "Завантаження товарів";
+                try {
+                    const products = await fetchProductsByCategory(category.id);
+                    renderProducts(products);
+                } catch (e) {
+                    mainSection.textContent = "Помилка завантаження товарів цієї категорії";
+                    console.error(e);
+                }
+            } )
+
             categoryList.appendChild(li);
         });
         categoryLine.appendChild(categoryList)
@@ -42,8 +95,29 @@ export async function renderShopPage () {
         
         products.forEach((product) => {
             const productCard = document.createElement('div');
-            productCard.innerHTML = product.masterData.current.name["en-GB"];
+            productCard.className = "product-card"
+            const productName = product.masterData.current.name["en-GB"];
+            const imageUrl = product.masterData.current.masterVariant.images?.[0]?.url;
+            const price = product.masterData.current.masterVariant.prices?.[0]?.value;
+
+            const image = document.createElement('img');
+            image.src = imageUrl ?? "";
+            image.alt = productName;
+            image.className = "product-image";
+
+            const nameElement = document.createElement("h3");
+            nameElement.textContent = productName;
+            const priceElement = document.createElement("p");
+            priceElement.textContent = price
+            ? `${price.centAmount / 100} ${price.currencyCode}`
+            : "Ціна недоступна";
+
+            productCard.appendChild(image);
+            productCard.appendChild(nameElement);
+            productCard.appendChild(priceElement);
+
             mainSection.appendChild(productCard);
+
         });
         
     } catch (e) {
@@ -59,3 +133,4 @@ export async function renderShopPage () {
 
 
 };
+

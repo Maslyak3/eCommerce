@@ -91,3 +91,41 @@ min-height: 400px;
   font-size: 14px;
   color: #6b5e45;
 }
+
+.sidebar {
+  width: 220px;
+  padding: 16px;
+  background-color: #f7f7f7;
+  border-right: 1px solid #ddd;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.sidebar select {
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  transition: border-color 0.2s;
+}
+
+.sidebar select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.sidebar .price-label {
+  font-size: 13px;
+  color: #555;
+}

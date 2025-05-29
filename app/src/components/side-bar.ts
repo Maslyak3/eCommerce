@@ -2,7 +2,6 @@ import { fetchProducts, fetchProductsByCategory } from "../api/products";
 import { renderProducts, sideBar } from "../pages/shop";
 
 const token = localStorage.getItem("accessToken");
-console.log("TOKEN:", token); 
 
 export const renderPriceControls = async () => {
     // const sideBar = document.querySelector(".sidebar") as HTMLElement;
@@ -27,6 +26,9 @@ export const renderPriceControls = async () => {
     sortLabel.textContent = "Сортування за ціною";
     const select = document.createElement("select");
 
+    const optionBlanc = document.createElement("option");
+    optionBlanc.textContent = "Сортувати"
+
     const optionAsc = document.createElement("option");
     optionAsc.value = "asc";
     optionAsc.textContent = "Зростання ціни";
@@ -35,6 +37,7 @@ export const renderPriceControls = async () => {
     optionDesc.value = "desc";
     optionDesc.textContent = "Спадання ціни";
 
+    select.appendChild(optionBlanc)
     select.appendChild(optionAsc);
     select.appendChild(optionDesc);
 
@@ -81,7 +84,7 @@ const fetchFilteredProducts = async (options: any = {}) => {
 
     if (options.maxPrice) {
         const maxCentAmount = Math.round(options.maxPrice * 100);
-        params.push(`filter=variants.scopedPrice.value.centAmount:range(0 to ${maxCentAmount})`);
+        params.push(`filter=variants.price.centAmount:range(0 to ${maxCentAmount})`);
     }
 
     const queryString = params.join("&");
@@ -90,6 +93,14 @@ const fetchFilteredProducts = async (options: any = {}) => {
             Authorization: `Bearer ${token}`,
         },
     });
+    
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Помилка fetchFilteredProducts:", response.status, errorText);
+        return [];
+    }
+
     const data = await response.json();
+    console.log(data)
     return data.results;
 };

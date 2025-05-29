@@ -7,30 +7,42 @@ import { renderPriceControls } from "../components/side-bar";
 export const renderProducts = async (products: any[]) => {
     const mainSection = document.querySelector('.main-section') as HTMLElement;
     mainSection.textContent = "";
+
+    
     products.forEach((product) => {
+        const mainSection = document.querySelector('.main-section') as HTMLElement;
+    mainSection.textContent = "";
+
+    products.forEach((product) => {
+        const data = product.masterData?.current ?? product; // Гнучко: працює для обох типів
+        const variant = data.masterVariant;
+
+        const productName = data.name?.["en-GB"] ?? "No name";
+        const imageUrl = variant?.images?.[0]?.url ?? "";
+        const price = variant?.prices?.[0]?.value;
+
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
-        const productName = product.masterData.current.name["en-GB"];
-            const imageUrl = product.masterData.current.masterVariant.images?.[0]?.url;
-            const price = product.masterData.current.masterVariant.prices?.[0]?.value;
 
-            const image = document.createElement('img');
-            image.src = imageUrl ?? "";
-            image.alt = productName;
-            image.className = "product-image";
+        const image = document.createElement('img');
+        image.src = imageUrl;
+        image.alt = productName;
+        image.className = "product-image";
 
-            const nameElement = document.createElement("h3");
-            nameElement.textContent = productName;
-            const priceElement = document.createElement("p");
-            priceElement.textContent = price
+        const nameElement = document.createElement("h3");
+        nameElement.textContent = productName;
+
+        const priceElement = document.createElement("p");
+        priceElement.textContent = price
             ? `${price.centAmount / 100} ${price.currencyCode}`
             : "Ціна недоступна";
 
-            productCard.appendChild(image);
-            productCard.appendChild(nameElement);
-            productCard.appendChild(priceElement);
+        productCard.appendChild(image);
+        productCard.appendChild(nameElement);
+        productCard.appendChild(priceElement);
 
-            mainSection.appendChild(productCard);
+        mainSection.appendChild(productCard);
+    });
 
     })
 }
@@ -117,6 +129,8 @@ export async function renderShopPage () {
             productCard.appendChild(priceElement);
 
             mainSection.appendChild(productCard);
+
+            productCard.addEventListener("click", () => {alert(nameElement.textContent)});
 
         });
         

@@ -1,0 +1,32 @@
+.product-image-large {
+    display: block;
+    width: 400px;
+    margin: 20px auto;
+}
+
+.product-name {
+    text-align: center;
+}
+
+.product-price {
+    display: block;
+   text-align: center;
+}
+
+.product-description {
+    margin: 1rem 0;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  .product-attributes {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .product-attributes li {
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+    color: #444;
+  }

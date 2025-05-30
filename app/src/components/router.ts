@@ -4,6 +4,7 @@ import { renderCartPage } from '../pages/cart';
 import { renderContactsPage } from '../pages/contacts';
 import { renderLoginPage } from '../pages/login';
 import { renderProfilePage } from '../pages/client-profile';
+import { renderProductPage } from '../pages/product-card';
 
 export function initRouter() {
     window.addEventListener('hashchange', handleRouteChange);
@@ -27,6 +28,9 @@ export function initRouter() {
         case 'profile':
           renderProfilePage();
           break;
+          // case 'product':
+          //   renderProductPage();
+          //   break;
         default:
           renderLoginPage();
       }

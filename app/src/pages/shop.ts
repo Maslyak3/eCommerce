@@ -3,6 +3,7 @@ import "./shop.css"
 import { fetchProducts, fetchProductsByCategory } from "../api/products";
 import { fetchCategories } from "../api/categories";
 import { renderPriceControls } from "../components/side-bar";
+import { renderProductPage } from "./product-card";
 
 export const renderProducts = async (products: any[]) => {
     const mainSection = document.querySelector('.main-section') as HTMLElement;
@@ -14,7 +15,7 @@ export const renderProducts = async (products: any[]) => {
     mainSection.textContent = "";
 
     products.forEach((product) => {
-        const data = product.masterData?.current ?? product; // Гнучко: працює для обох типів
+        const data = product.masterData?.current ?? product;
         const variant = data.masterVariant;
 
         const productName = data.name?.["en-GB"] ?? "No name";
@@ -40,8 +41,10 @@ export const renderProducts = async (products: any[]) => {
         productCard.appendChild(image);
         productCard.appendChild(nameElement);
         productCard.appendChild(priceElement);
-
+        
         mainSection.appendChild(productCard);
+
+        productCard.addEventListener("click", () => {renderProductPage(product)});
     });
 
     })
@@ -130,7 +133,8 @@ export async function renderShopPage () {
 
             mainSection.appendChild(productCard);
 
-            productCard.addEventListener("click", () => {alert(nameElement.textContent)});
+            productCard.addEventListener("click", () => {renderProductPage(product)});
+
 
         });
         

@@ -1,5 +1,6 @@
 import "./about.css"
 import { mainDiv } from "./login";
+import { renderShopPage } from "./shop";
 
 export function renderAboutPage() {
     mainDiv.textContent = "";
@@ -48,6 +49,11 @@ export function renderAboutPage() {
 
     mainDiv.append(aboutWrap);
     mainDiv.append(toTheShop);
+
+    toTheShop.addEventListener("click", () => {
+        renderShopPage()
+    }
+    )
 
 
 }

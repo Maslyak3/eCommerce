@@ -67,6 +67,7 @@ export const header = function() {
     contactsNavBtn.addEventListener("click", renderContactsPage);
     cartNavBtn.addEventListener("click", renderCartPage);
     profileNavBtn.addEventListener("click", renderProfilePage);
+    cartNavBtn.addEventListener("click", renderCartPage);
 
 
     

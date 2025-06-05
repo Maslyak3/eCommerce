@@ -15,6 +15,7 @@ export const renderProducts = async (products: any[]) => {
     mainSection.textContent = "";
 
     products.forEach((product) => {
+        
         const data = product.masterData?.current ?? product;
         const variant = data.masterVariant;
 
@@ -52,6 +53,9 @@ export const renderProducts = async (products: any[]) => {
 
 export const sideBar = document.createElement('div');
     sideBar.className = "sidebar";
+
+
+    
 
 export async function renderShopPage () {
     mainDiv.textContent = "";

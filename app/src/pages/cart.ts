@@ -1,7 +1,9 @@
+import { mainDiv } from "./login";
 
 export function renderCartPage() {
+    mainDiv.textContent = '';
     const test = document.createElement('div');
     test.textContent = 'Поки що пуста сторінка корзини';
-    document.body.append(test);
+    mainDiv.append(test);
 
 }

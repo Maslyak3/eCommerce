@@ -4,17 +4,15 @@ import { renderProducts, sideBar } from "../pages/shop";
 const token = localStorage.getItem("accessToken");
 
 export const renderPriceControls = async () => {
-    // const sideBar = document.querySelector(".sidebar") as HTMLElement;
-    
-    const products = await fetchProducts()
+        
+    const allProducts = await fetchProducts();
     const prices: number[] = [];
 
-    for (const product of products) {
-        const p = product.masterData && product.masterData.current && product.masterData.current.masterVariant?.prices?.[0]?.value?.centAmount;
-        if (typeof p === "number") {
-            prices.push(p / 100);
-        }
+    for (const product of allProducts) {
+        const centAmount = product.masterData?.current?.masterVariant?.prices?.[0]?.value?.centAmount;
+        if (typeof centAmount === "number") prices.push(centAmount / 100);
     }
+
     if (prices.length === 0) return;
 
     const minPrice = Math.min(...prices);
@@ -22,6 +20,11 @@ export const renderPriceControls = async () => {
 
     sideBar.textContent = "";
 
+    const searchInput = document.createElement("input");
+    searchInput.type = "text";
+    searchInput.placeholder = "Пошук товарів за назвою";
+    searchInput.className = "search-input";
+    
     const sortLabel = document.createElement('label');
     sortLabel.textContent = "Сортування за ціною";
     const select = document.createElement("select");
@@ -41,50 +44,109 @@ export const renderPriceControls = async () => {
     select.appendChild(optionAsc);
     select.appendChild(optionDesc);
 
-    const rangeLabel = document.createElement("label");
-    rangeLabel.textContent = `Максимальна ціна: ${maxPrice.toFixed(2)} €`;
+    const minLabel = document.createElement("label");
+    minLabel.textContent = `Мінімальна ціна: ${minPrice.toFixed(2)} €`;
 
-    const rangeInput = document.createElement("input");
-    rangeInput.type = "range";
-    rangeInput.min = minPrice.toString();
-    rangeInput.max = maxPrice.toString();
-    rangeInput.step = "1";
-    rangeInput.value = maxPrice.toString();
+    const minInput = document.createElement("input");
+    minInput.type = "range";
+    minInput.min = minPrice.toString();
+    minInput.max = maxPrice.toString();
+    minInput.step = "1";
+    minInput.value = minPrice.toString();
+
+    const maxLabel = document.createElement("label");
+    maxLabel.textContent = `Максимальна ціна: ${maxPrice.toFixed(2)} €`;
+
+    const maxInput = document.createElement("input");
+    maxInput.type = "range";
+    maxInput.min = minPrice.toString();
+    maxInput.max = maxPrice.toString();
+    maxInput.step = "1";
+    maxInput.value = maxPrice.toString();
+
+    const discountCheckbox = document.createElement("input");
+    discountCheckbox.type = "checkbox";
+    discountCheckbox.id = "discount-checkbox";
+
+    const discountLabel = document.createElement("label");
+    discountLabel.textContent = "Тільки акційні товари";
+    discountLabel.htmlFor = "discount-checkbox";
+
+    const updateLabels = () => {
+        minLabel.textContent = `Мінімальна ціна: ${minInput.value} €`;
+        maxLabel.textContent = `Максимальна ціна: ${maxInput.value} €`; 
+    };
 
     const updateProducts = async () => {
         const selectedOrder = select.value;
-        const maxPriceFilter = parseFloat(rangeInput.value);
+        const priceFrom = parseFloat(minInput.value);
+        const priceTo = parseFloat(maxInput.value);
+        const searchQuery = searchInput.value.trim().toLowerCase();
+        const onlyDiscounted = discountCheckbox.checked;
 
         const filteredProducts = await fetchFilteredProducts({
             sortOrder: selectedOrder,
-            maxPrice: maxPriceFilter,
+            minPrice: priceFrom,
+            maxPrice: priceTo,
         });
-        renderProducts(filteredProducts);
-    }
+        
+        const matchedByName = allProducts.filter((product: any) =>
+            product.masterData.current.name["en-GB"].toLowerCase().includes(searchQuery)
+        );
+
+        const matchedByPrice = matchedByName.filter((product: any) => {
+            const price = product.masterData?.current?.masterVariant?.prices?.[0]?.value?.centAmount;
+            if (typeof price !== "number") return false;
+            const priceInEuros = price / 100;
+            return priceInEuros >= priceFrom && priceInEuros <= priceTo;
+        });
+
+        const matchedByDiscount = onlyDiscounted ? matchedByPrice.filter((product: any) => {
+            const prices = product.masterData?.current?.masterVariant?.prices;
+            return prices.some((price: any) => price.discounted);
+        }) : matchedByPrice;
+        renderProducts(matchedByDiscount);
+    };
+
     select.addEventListener("change", updateProducts);
-    rangeInput.addEventListener("input", () => {
-        rangeLabel.textContent = `Максимальна ціна: ${rangeInput.value} €`;
+    searchInput.addEventListener("input", updateProducts);
+    minInput.addEventListener("input", () => {
+        updateLabels();
         updateProducts();
     });
 
-    sideBar.appendChild(sortLabel);
-    sideBar.appendChild(select);
-    sideBar.appendChild(rangeLabel);
-    sideBar.appendChild(rangeInput);
-}
+    maxInput.addEventListener("input", () => {
+        updateLabels();
+        updateProducts();
+    });
+    discountCheckbox.addEventListener("change", updateProducts);
+
+    sideBar.append(
+        searchInput,
+        sortLabel,
+        select,
+        minLabel,
+        minInput,
+        maxLabel,
+        maxInput,
+        discountCheckbox,
+        discountLabel
+    );
+};
 
 const fetchFilteredProducts = async (options: any = {}) => {
     const params: string[] = [];
 
     if (options.sortOrder === "desc") {
         params.push("sort=price desc")
-    } else {
+    } else if (options.sortOrder === "asc") {
         params.push("sort=price asc")
     }
 
-    if (options.maxPrice) {
-        const maxCentAmount = Math.round(options.maxPrice * 100);
-        params.push(`filter=variants.price.centAmount:range(0 to ${maxCentAmount})`);
+    if (typeof options.minPrice === "number" && options.maxPrice === "number") {
+        const from = Math.round(options.minPrice * 100);
+        const to = Math.round(options.maxPrice * 100);
+        params.push(`filter=variants.price.centAmount:range(${from} to ${to})`);
     }
 
     const queryString = params.join("&");

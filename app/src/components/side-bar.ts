@@ -89,23 +89,19 @@ export const renderPriceControls = async () => {
             minPrice: priceFrom,
             maxPrice: priceTo,
         });
-        
-        const matchedByName = allProducts.filter((product: any) =>
-            product.masterData.current.name["en-GB"].toLowerCase().includes(searchQuery)
-        );
+                
+            const matchedByName = filteredProducts.filter((product: any) => {
+            const name = product?.masterData?.current?.name?.["en-GB"]?.toLowerCase();
+            return name?.includes(searchQuery)
+    });
+           const matchedByDiscount = onlyDiscounted
+            ? matchedByName.filter((product: any) =>
+                product?.masterData?.current?.masterVariant?.prices?.some((price: any) => price.discounted)
+            )
+            : matchedByName;
 
-        const matchedByPrice = matchedByName.filter((product: any) => {
-            const price = product.masterData?.current?.masterVariant?.prices?.[0]?.value?.centAmount;
-            if (typeof price !== "number") return false;
-            const priceInEuros = price / 100;
-            return priceInEuros >= priceFrom && priceInEuros <= priceTo;
-        });
-
-        const matchedByDiscount = onlyDiscounted ? matchedByPrice.filter((product: any) => {
-            const prices = product.masterData?.current?.masterVariant?.prices;
-            return prices.some((price: any) => price.discounted);
-        }) : matchedByPrice;
         renderProducts(matchedByDiscount);
+        
     };
 
     select.addEventListener("change", updateProducts);
@@ -120,6 +116,7 @@ export const renderPriceControls = async () => {
         updateProducts();
     });
     discountCheckbox.addEventListener("change", updateProducts);
+    updateLabels();
 
     sideBar.append(
         searchInput,
@@ -134,31 +131,48 @@ export const renderPriceControls = async () => {
     );
 };
 
-const fetchFilteredProducts = async (options: any = {}) => {
-    const params: string[] = [];
+const fetchFilteredProducts = async (options: {
+    sortOrder?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    searchQuery?: string;
+} = {}) => {
+    const searchParams = new URLSearchParams();
 
     if (options.sortOrder === "desc") {
-        params.push("sort=price desc")
+        searchParams.append("sort", "price desc");
     } else if (options.sortOrder === "asc") {
-        params.push("sort=price asc")
+        searchParams.append("sort", "price asc");
     }
 
-    if (typeof options.minPrice === "number" && options.maxPrice === "number") {
+    if (typeof options.minPrice === "number" && typeof options.maxPrice === "number") {
         const from = Math.round(options.minPrice * 100);
         const to = Math.round(options.maxPrice * 100);
-        params.push(`filter=variants.price.centAmount:range(${from} to ${to})`);
+        searchParams.append("filter", `variants.price.centAmount:range(${from} to ${to})`);
     }
 
-    const queryString = params.join("&");
-    const response = await fetch(`https://api.europe-west1.gcp.commercetools.com/microworld/product-projections/search?${queryString}`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-    
+        searchParams.append("filter.query", "variants.price.centAmount:exists(true)");
+
+        if (options.searchQuery && options.searchQuery.length >= 2) {
+            searchParams.append("text.en-GB", options.searchQuery);
+            searchParams.append("fuzzy", "true");
+        }
+
+    const queryString = searchParams.toString();
+    console.log("🔗 Запит до API:", queryString);
+
+    const response = await fetch(
+        `https://api.europe-west1.gcp.commercetools.com/microworld/product-projections/search?${queryString}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
     if (!response.ok) {
         const errorText = await response.text();
-        console.error("Помилка fetchFilteredProducts:", response.status, errorText);
+        console.error("❌ API помилка:", errorText);
         return [];
     }
 

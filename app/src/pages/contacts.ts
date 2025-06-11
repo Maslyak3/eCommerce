@@ -12,7 +12,32 @@ export function renderContactsPage() {
     const contactTel = document.createElement("div");
     contactTel.innerHTML= "Наші телефони: <br> +38067-327-02-51 <br> +38044-209-22-09";
     const contactSocial = document.createElement('div')
-    contactSocial.innerHTML = `<img src='https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg'> <img src='https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png'> <img src='https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png'>`
+
+    const facebook = document.createElement('img');
+    facebook.src = 'https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg';
+    const facebookLink = document.createElement('a');
+    facebookLink.href = "https://www.facebook.com/maslyak.roman";
+    facebookLink.target = "_blank";
+
+    const instagram = document.createElement('img');
+    instagram.src = 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png';
+    const instagramLink = document.createElement('a');
+    instagramLink.href = "https://www.instagram.com/masliakr/";
+    instagramLink.target = "_blank";
+
+    const youtube = document.createElement('img');
+    youtube.src = 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png';
+    const youtubeLink = document.createElement('a');
+    youtubeLink.href = "https://www.youtube.com/@romanmaslyak3897";
+    youtubeLink.target = "_blank";
+    instagramLink.append(instagram);
+    facebookLink.append(facebook);
+    youtubeLink.append(youtube);
+    contactSocial.append(facebookLink);
+    contactSocial.append(instagramLink);
+    contactSocial.append(youtubeLink);
+
+    // contactSocial.innerHTML = `<img src='https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg'> <img src='https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png'> <img src='https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png'>`
 
     const contactLeft = document.createElement("div");
     contactLeft.className = "contact-left";

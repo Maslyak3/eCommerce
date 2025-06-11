@@ -6,6 +6,7 @@ import { renderPriceControls } from "../components/side-bar";
 import { renderProductPage } from "./product-card";
 
 export const renderProducts = async (products: any[]) => {
+    console.log("🖼️ Рендеримо продукти:", products.length);
     const mainSection = document.querySelector('.main-section') as HTMLElement;
     mainSection.textContent = "";
 

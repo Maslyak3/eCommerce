@@ -14,16 +14,28 @@ export const footer = function() {
 
     const facebook = document.createElement('img');
     facebook.src = 'https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg';
+    const facebookLink = document.createElement('a');
+    facebookLink.href = "https://www.facebook.com/maslyak.roman";
+    facebookLink.target = "_blank";
 
     const instagram = document.createElement('img');
     instagram.src = 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png';
+    const instagramLink = document.createElement('a');
+    instagramLink.href = "https://www.instagram.com/masliakr/";
+    instagramLink.target = "_blank";
 
     const youtube = document.createElement('img');
     youtube.src = 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png';
+    const youtubeLink = document.createElement('a');
+    youtubeLink.href = "https://www.youtube.com/@romanmaslyak3897";
+    youtubeLink.target = "_blank";
 
-    footerSocial.append(facebook);
-    footerSocial.append(instagram);
-    footerSocial.append(youtube);
+    instagramLink.append(instagram);
+    facebookLink.append(facebook);
+    youtubeLink.append(youtube);
+    footerSocial.append(facebookLink);
+    footerSocial.append(instagramLink);
+    footerSocial.append(youtubeLink);
 
     const copyright = document.createElement('div');
     copyright.textContent = "Developed by Roman Masliak in 2025"

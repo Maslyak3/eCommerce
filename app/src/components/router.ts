@@ -16,6 +16,7 @@ export function initRouter() {
       switch (route) {
         case 'shop':
           renderShopPage()
+          break;
         case 'about':
           renderAboutPage();
           break;

@@ -7,6 +7,8 @@ import { renderContactsPage } from "../pages/contacts";
 import { renderShopPage } from "../pages/shop";
 import { renderProfilePage } from '../pages/client-profile';
 
+export const cartNavBtn = document.createElement('li');
+
 export const header = function() {
     const headerElement = document.createElement('section');
     headerElement.setAttribute('id', 'header');
@@ -32,7 +34,7 @@ export const header = function() {
     contactsNavBtn.setAttribute("id", "contacts-button");
     contactsNavBtn.textContent = 'Contacts';
 
-    const cartNavBtn = document.createElement('li');
+    
     cartNavBtn.setAttribute("id", "cart-button");
     cartNavBtn.textContent = 'Cart';
 
@@ -65,7 +67,6 @@ export const header = function() {
     shopNavBtn.addEventListener("click", renderShopPage);
     aboutNavBtn.addEventListener("click", renderAboutPage);
     contactsNavBtn.addEventListener("click", renderContactsPage);
-    cartNavBtn.addEventListener("click", renderCartPage);
     profileNavBtn.addEventListener("click", renderProfilePage);
     cartNavBtn.addEventListener("click", renderCartPage);
 

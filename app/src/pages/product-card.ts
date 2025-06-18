@@ -1,9 +1,12 @@
 import { mainDiv } from "./login";
 import { renderShopPage } from "./shop";
+import { cartNavBtn } from "../components/header";
 import "./product-card.css"
 
+export let cartItems = [];
 export function renderProductPage(product: any) {
 mainDiv.textContent = "";
+  
 
   const data = product.masterData.current;
   const variant = data.masterVariant;
@@ -11,7 +14,6 @@ mainDiv.textContent = "";
   let currentIndex = 0;
 
     const productName = data.name["en-GB"];
-    // const imageUrl = data.masterVariant.images?.[0]?.url;
     const price = data.masterVariant.prices?.[0]?.value;
     const description = data.description?.["en-GB"] ?? "Опис недоступний";
     const attributes = data.attributes ?? [];
@@ -86,13 +88,11 @@ mainDiv.textContent = "";
   if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
     displayValue = String(value);
   } else if (value?.label) {
-    // Enum тип: { label: 'Glossy', key: 'glossy' }
     displayValue = value.label;
   } else if (value?.["en-GB"]) {
-    // Локалізоване значення
     displayValue = value["en-GB"];
   } else {
-    displayValue = JSON.stringify(value); // fallback
+    displayValue = JSON.stringify(value);
   }
 
   attrItem.textContent = `${name}: ${displayValue}`;
@@ -105,12 +105,45 @@ mainDiv.textContent = "";
         renderShopPage()
     });
 
+    function addToCart(product: any) {
+        const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        existingCart.push(product);
+        localStorage.setItem("cart", JSON.stringify(existingCart));
+    };
+
+    function removeFromCart(product: string) {
+        const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        const updatedCart = existingCart.filter((item: any) => item !== product);
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+    }
+
+    let cartCount = 0;
+    const cartBtn = document.createElement("button");
+    cartBtn.textContent = "Додати до кошика";
+    cartBtn.addEventListener("click", () => {
+
+      if (cartBtn.textContent === "Додати до кошика") {
+        cartBtn.textContent = "Товар додано до кошика";
+          cartCount++;
+          
+          addToCart(product);
+      } else {
+        cartBtn.textContent = "Додати до кошика";
+    cartCount = Math.max(0, cartCount - 1);
+    removeFromCart(product);
+        }
+        cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+       cartNavBtn.textContent = `Cart (${cartItems.length})`;
+           
+    });
+
 mainDiv.append(nameElement,
   slider,
     priceElement,
     descriptionElement,
     attributesContainer,
-    backBtn);
+    backBtn,
+    cartBtn);
     
 
 }

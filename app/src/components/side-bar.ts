@@ -139,6 +139,7 @@ const fetchFilteredProducts = async (options: {
 } = {}) => {
     const searchParams = new URLSearchParams();
 
+
     if (options.sortOrder === "desc") {
         searchParams.append("sort", "price desc");
     } else if (options.sortOrder === "asc") {
@@ -151,7 +152,7 @@ const fetchFilteredProducts = async (options: {
         searchParams.append("filter", `variants.price.centAmount:range(${from} to ${to})`);
     }
 
-        searchParams.append("filter.query", "variants.price.centAmount:exists(true)");
+        searchParams.append("filter", "variants.price.centAmount:exists");
 
         if (options.searchQuery && options.searchQuery.length >= 2) {
             searchParams.append("text.en-GB", options.searchQuery);

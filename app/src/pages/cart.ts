@@ -1,12 +1,15 @@
 import { mainDiv } from "./login";
 import { renderShopPage } from "./shop";
 import './cart.css';
+import { renderOrderPage } from "./order";
 
+
+export let cartItems: any[] = [];
 export function renderCartPage() {
-    
+    console.log('Rendering cart page');
     mainDiv.textContent = '';
     
-    const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+   cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
     
     const totalAmount = cartItems.reduce((sum: number, item: any) => {
         const quantity = Math.max(item.quantity || 1);
@@ -30,6 +33,7 @@ export function renderCartPage() {
 
 
     cartItems.forEach((item: any) => {
+                
         const quantity = Math.max(item.quantity || 1);
         const itemDiv = document.createElement('div');
         itemDiv.className = 'cart-item';
@@ -67,6 +71,8 @@ export function renderCartPage() {
         removeBtn.textContent = 'Видалити';
         removeBtn.className = 'remove-btn';
         removeBtn.addEventListener('click', () => {
+            console.log('76254261');
+            
             removeItem(item.id); 
             renderCartPage(); 
         });
@@ -83,12 +89,15 @@ export function renderCartPage() {
     const checkoutBtn = document.createElement('button');
     checkoutBtn.textContent = 'Оформити замовлення';
     checkoutBtn.className = 'checkout-btn';
+    checkoutBtn.addEventListener('click', () => {
+        renderOrderPage()
+    });
 
     const backBtn = document.createElement('button');
     backBtn.textContent = 'Продовжити покупки';
     backBtn.className = 'back-btn';
     backBtn.addEventListener('click', () => {
-        renderShopPage
+        renderShopPage()
     });
     mainDiv.append(cartContainer, totalPrice, checkoutBtn, backBtn);
 
@@ -108,9 +117,11 @@ export function renderCartPage() {
     }
 
     function removeItem(productId: string) {
+        console.log('removeItem');
+        
         const updatedCart = cartItems.filter((item: any) => item.id !== productId);
         localStorage.setItem('cart', JSON.stringify(updatedCart));
-        renderCartPage
+        renderCartPage();
     }
 
 }

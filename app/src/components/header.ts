@@ -9,7 +9,7 @@ import { renderProfilePage } from '../pages/client-profile';
 
 export const cartNavBtn = document.createElement('li');
 
-export const header = function() {
+export function header() {
     const headerElement = document.createElement('section');
     headerElement.setAttribute('id', 'header');
     const logo = document.createElement('img');
@@ -55,12 +55,9 @@ export const header = function() {
     document.body.append(headerElement);
     headerElement.append(logo);
 
-    navBar.append(loginNavBtn);
-    navBar.append(shopNavBtn);
-    navBar.append(aboutNavBtn);
-    navBar.append(contactsNavBtn);
-    navBar.append(cartNavBtn);
-    navBar.append(profileNavBtn);
+ 
+    console.log(navBar);
+    
     headerElement.append(navBar);
 
     loginNavBtn.addEventListener("click", renderLoginPage);
@@ -68,9 +65,18 @@ export const header = function() {
     aboutNavBtn.addEventListener("click", renderAboutPage);
     contactsNavBtn.addEventListener("click", renderContactsPage);
     profileNavBtn.addEventListener("click", renderProfilePage);
-    cartNavBtn.addEventListener("click", renderCartPage);
-
-
+    console.log('here');
+    console.log(cartNavBtn);
     
-    return headerElement;
+    cartNavBtn.addEventListener("click", ()=>{
+        console.log('click');
+     renderCartPage()});
+
+    navBar.append(loginNavBtn);
+    navBar.append(shopNavBtn);
+    navBar.append(aboutNavBtn);
+    navBar.append(contactsNavBtn);
+    navBar.append(cartNavBtn);
+    navBar.append(profileNavBtn);
+    
 }

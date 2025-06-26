@@ -4,16 +4,55 @@ import './cart.css';
 import { renderOrderPage } from "./order";
 
 
-export let cartItems: any[] = [];
+interface ProductPriceValue {
+    centAmount: number;
+    currencyCode: string;
+}
+
+interface ProductPrice {
+    value: ProductPriceValue;
+    discounted?: {
+        value: ProductPriceValue;
+    }
+}
+
+interface ProductImage {
+    url: string;
+}
+
+interface ProductName {
+    "en-GB": string;
+    [key: string]: string;
+}
+
+interface ProductVariant {
+    prices?: ProductPrice[];
+    images?: ProductImage[];
+}
+
+interface ProductData {
+    name: ProductName;
+    masterVariant: ProductVariant;
+}
+
+export interface CartItem {
+    id: string;
+    quantity?: number;
+    masterData: {
+        current: ProductData;
+    };
+}
+
+export let cartItems: CartItem[] = [];
 export function renderCartPage() {
     console.log('Rendering cart page');
     mainDiv.textContent = '';
     
-   cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+   cartItems = JSON.parse(localStorage.getItem('cart') || '[]') as CartItem[];
     
-    const totalAmount = cartItems.reduce((sum: number, item: any) => {
+    const totalAmount = cartItems.reduce((sum: number, item: CartItem) => {
         const quantity = Math.max(item.quantity || 1);
-        const price = item.masterData.current.masterVariant.prices[0].value.centAmount || 0;
+        const price = item.masterData.current.masterVariant.prices?.[0].value.centAmount || 0;
         return sum + (price * quantity);
     }, 0);
      
@@ -32,14 +71,14 @@ export function renderCartPage() {
     cartContainer.className = "cart-container";
 
 
-    cartItems.forEach((item: any) => {
+    cartItems.forEach((item: CartItem) => {
                 
         const quantity = Math.max(item.quantity || 1);
         const itemDiv = document.createElement('div');
         itemDiv.className = 'cart-item';
 
         const cartItemPhoto = document.createElement('img');
-        cartItemPhoto.src = item.masterData.current.masterVariant.images[0]?.url || "";
+        cartItemPhoto.src = item.masterData.current.masterVariant.images?.[0]?.url || "";
         cartItemPhoto.alt = item.masterData.current.name["en-GB"];
         cartItemPhoto.style.width = '200px';
 
@@ -47,9 +86,13 @@ export function renderCartPage() {
         cartItemName.textContent = item.masterData.current.name["en-GB"];
         
         const cartItemPrice = document.createElement("p");
-        const priceData = item.masterData.current.masterVariant.prices[0].value;
-        cartItemPrice.textContent = `${(priceData.centAmount / 100 * quantity).toFixed(2)} ${priceData.currencyCode}`;
+        const priceData = item.masterData.current.masterVariant.prices?.[0].value;
         
+        if(!priceData) {
+            console.error('Price data is missing for item:', item);} else {
+        cartItemPrice.textContent = `${(priceData.centAmount / 100 * quantity).toFixed(2)} ${priceData.currencyCode}`;
+            }
+
         const quantityControls = document.createElement('div');
         quantityControls.className = 'quantity-controls';
 
@@ -84,7 +127,7 @@ export function renderCartPage() {
 
     const totalPrice = document.createElement('div');
     totalPrice.className = 'cart-total';
-    totalPrice.textContent = `Загальна сума: ${(totalAmount / 100).toFixed(2)} ${cartItems[0]?.masterData.current.masterVariant.prices[0]?.value?.currencyCode || ""}`;
+    totalPrice.textContent = `Загальна сума: ${(totalAmount / 100).toFixed(2)} ${cartItems[0]?.masterData.current.masterVariant.prices?.[0]?.value?.currencyCode || ""}`;
     
     const checkoutBtn = document.createElement('button');
     checkoutBtn.textContent = 'Оформити замовлення';
@@ -102,7 +145,7 @@ export function renderCartPage() {
     mainDiv.append(cartContainer, totalPrice, checkoutBtn, backBtn);
 
     function updateQuantity(productId: string, change: number) {
-        const updatedCart = cartItems.map((item: any) => {
+        const updatedCart = cartItems.map((item: CartItem) => {
             if (item.id === productId) {
                 const currentQuantity = item.quantity || 1;
                 const newQuantity = currentQuantity + change;
@@ -119,7 +162,7 @@ export function renderCartPage() {
     function removeItem(productId: string) {
         console.log('removeItem');
         
-        const updatedCart = cartItems.filter((item: any) => item.id !== productId);
+        const updatedCart = cartItems.filter((item: CartItem) => item.id !== productId);
         localStorage.setItem('cart', JSON.stringify(updatedCart));
         renderCartPage();
     }

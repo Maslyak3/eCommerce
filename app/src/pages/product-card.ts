@@ -2,10 +2,12 @@ import { mainDiv } from "./login";
 import { renderShopPage } from "./shop";
 import { cartNavBtn } from "../components/header";
 import "./product-card.css"
+import { Product } from "api/products";
+import { CartItem } from "./cart";
 
 export let cartItems = [];
-export function renderProductPage(product: any) {
-mainDiv.textContent = "";
+export function renderProductPage(product: Product) {
+  mainDiv.textContent = "";
   
 
   const data = product.masterData.current;
@@ -16,7 +18,7 @@ mainDiv.textContent = "";
     const productName = data.name["en-GB"];
     const price = data.masterVariant.prices?.[0]?.value;
     const description = data.description?.["en-GB"] ?? "Опис недоступний";
-    const attributes = data.attributes ?? [];
+    const attributes = data.masterVariant.attributes ?? [];
 
     const slider = document.createElement('div');
     slider.className = "image-slider";
@@ -105,15 +107,15 @@ mainDiv.textContent = "";
         renderShopPage()
     });
 
-    function addToCart(product: any) {
+    function addToCart(product: Product) {
         const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
         existingCart.push(product);
         localStorage.setItem("cart", JSON.stringify(existingCart));
     };
 
-    function removeFromCart(product: string) {
+    function removeFromCart(product: Product) {
         const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-        const updatedCart = existingCart.filter((item: any) => item !== product);
+        const updatedCart = existingCart.filter((item: CartItem) => item !== product);
         localStorage.setItem("cart", JSON.stringify(updatedCart));
     }
 

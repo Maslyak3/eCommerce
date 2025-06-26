@@ -7,32 +7,35 @@ import { renderProfilePage } from '../pages/client-profile';
 import { renderProductPage } from '../pages/product-card';
 
 export function initRouter() {
-    window.addEventListener('hashchange', handleRouteChange);
+    window.addEventListener('popstate', handleRouteChange);
     handleRouteChange();
+    window.addEventListener('load', handleRouteChange);
   
     function handleRouteChange() {
-      const route = window.location.hash.slice(1);
-      
-      switch (route) {
-        case 'shop':
+      const path = window.location.pathname;
+                  
+      switch (path) {
+        case '/login':
+          renderLoginPage()
+          break;
+        case '/shop':
           renderShopPage()
           break;
-        case 'about':
+        case '/about':
           renderAboutPage();
           break;
-        case 'cart':
+        case '/cart':
           renderCartPage();
           break;
-        case 'contacts':
+        case '/contacts':
           renderContactsPage();
           break;
-        case 'profile':
+        case '/profile':
           renderProfilePage();
           break;
-          // case 'product':
-          //   renderProductPage();
-          //   break;
+          
         default:
+          window.history.replaceState(null, '', '/login')
           renderLoginPage();
       }
     }

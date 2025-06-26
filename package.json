@@ -6,7 +6,7 @@
     "scripts": {
         "prepare": "husky install",
         "build": "webpack",
-        "start": "webpack serve",
+        "start": "webpack serve --mode development --open",
         "lint": "eslint \"app/src/**/*.{ts,tsx}\"",
         "format": "prettier --write \"app/src/**/*.{ts,tsx,js,json,css,md}\""
     },

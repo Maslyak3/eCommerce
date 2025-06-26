@@ -1,7 +1,21 @@
-import { fetchProducts, fetchProductsByCategory } from "../api/products";
+import { fetchProducts, fetchProductsByCategory} from "../api/products";
 import { renderProducts, sideBar } from "../pages/shop";
 
 const token = localStorage.getItem("accessToken");
+
+interface Product {
+    masterData: {
+      current: {
+        name: { 'en-GB': string };
+        masterVariant: {
+          prices?: Array<{
+            value: { centAmount: number };
+            discounted?: { value: { centAmount: number } };
+          }>;
+        };
+      };
+    };
+  }
 
 export const renderPriceControls = async () => {
         
@@ -90,16 +104,18 @@ export const renderPriceControls = async () => {
             maxPrice: priceTo,
         });
                 
-            const matchedByName = filteredProducts.filter((product: any) => {
+            const matchedByName = filteredProducts.filter((product: Product) => {
             const name = product?.masterData?.current?.name?.["en-GB"]?.toLowerCase();
             return name?.includes(searchQuery)
     });
-           const matchedByDiscount = onlyDiscounted
-            ? matchedByName.filter((product: any) =>
-                product?.masterData?.current?.masterVariant?.prices?.some((price: any) => price.discounted)
-            )
-            : matchedByName;
-
+    
+    const matchedByDiscount = onlyDiscounted
+  ? matchedByName.filter((product: Product) => 
+      product.masterData.current.masterVariant.prices?.some(
+        price => price.discounted !== undefined
+      )
+    )
+  : matchedByName;
         renderProducts(matchedByDiscount);
         
     };

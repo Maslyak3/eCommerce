@@ -5,6 +5,7 @@ import { getAccessToken } from "../api/auth";
 const API_URL = 'https://api.europe-west1.gcp.commercetools.com/microworld/me';
 
 export async function renderProfilePage() {
+    console.log("Rendering profile page");
     mainDiv.textContent = "";
 
     const token = localStorage.getItem("accessToken");

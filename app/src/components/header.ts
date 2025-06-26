@@ -11,72 +11,43 @@ export const cartNavBtn = document.createElement('li');
 
 export function header() {
     const headerElement = document.createElement('section');
-    headerElement.setAttribute('id', 'header');
+    headerElement.id = 'header';
+    
     const logo = document.createElement('img');
     logo.src = logoPath;
+    logo.addEventListener("click", () => navigateTo('/'));
 
     const navBar = document.createElement('ul');
-    navBar.setAttribute('id', 'nav-bar');
+    navBar.id = 'nav-bar';
 
-    const loginNavBtn = document.createElement('li');
-    loginNavBtn.setAttribute("id", "login-button");
-    loginNavBtn.textContent = 'Login';
+    // Створення кнопок навігації
+    const loginNavBtn = createNavButton('Login', '/login');
+    const shopNavBtn = createNavButton('Shop', '/shop');
+    const aboutNavBtn = createNavButton('About', '/about');
+    const contactsNavBtn = createNavButton('Contacts', '/contacts');
+    const profileNavBtn = createNavButton('My profile', '/profile');
+    const cartNavBtn = createNavButton('Cart', '/cart');
 
-    const shopNavBtn = document.createElement('li');
-    shopNavBtn.setAttribute("id", "shop-button");
-    shopNavBtn.textContent = 'Shop';
-
-    const aboutNavBtn = document.createElement('li');
-    aboutNavBtn.setAttribute("id", "about-button");
-    aboutNavBtn.textContent = 'About';
-
-    const contactsNavBtn = document.createElement('li');
-    contactsNavBtn.setAttribute("id", "contacts-button");
-    contactsNavBtn.textContent = 'Contacts';
-
-    
-    cartNavBtn.setAttribute("id", "cart-button");
-    cartNavBtn.textContent = 'Cart';
-
-    const profileNavBtn = document.createElement('li');
-    profileNavBtn.setAttribute("id", "profile-button");
-    profileNavBtn.textContent = 'My profile';
-
+    // Обробка авторизації
     const isLoggedIn = localStorage.getItem("UserLogin") && localStorage.getItem("UserPassword");
+    loginNavBtn.style.display = isLoggedIn ? "none" : "block";
+    profileNavBtn.style.display = isLoggedIn ? "block" : "none";
 
-    if (isLoggedIn) {
-        loginNavBtn.style.display = "none";
-        profileNavBtn.style.display = "block"
-    } else {
-        loginNavBtn.style.display = "block";
-        profileNavBtn.style.display = "none"
-    };
-
+    // Додавання елементів
+    navBar.append(loginNavBtn, shopNavBtn, aboutNavBtn, contactsNavBtn, cartNavBtn, profileNavBtn);
+    headerElement.append(logo, navBar);
     document.body.append(headerElement);
-    headerElement.append(logo);
 
- 
-    console.log(navBar);
-    
-    headerElement.append(navBar);
+    function createNavButton(text: string, path: string) {
+        const button = document.createElement('li');
+        button.textContent = text;
+        button.addEventListener('click', () => navigateTo(path));
+        return button;
+    }
 
-    loginNavBtn.addEventListener("click", renderLoginPage);
-    shopNavBtn.addEventListener("click", renderShopPage);
-    aboutNavBtn.addEventListener("click", renderAboutPage);
-    contactsNavBtn.addEventListener("click", renderContactsPage);
-    profileNavBtn.addEventListener("click", renderProfilePage);
-    console.log('here');
-    console.log(cartNavBtn);
-    
-    cartNavBtn.addEventListener("click", ()=>{
-        console.log('click');
-     renderCartPage()});
-
-    navBar.append(loginNavBtn);
-    navBar.append(shopNavBtn);
-    navBar.append(aboutNavBtn);
-    navBar.append(contactsNavBtn);
-    navBar.append(cartNavBtn);
-    navBar.append(profileNavBtn);
-    
+    function navigateTo(path: string) {
+        
+        window.history.pushState(null, '', path);
+        dispatchEvent(new PopStateEvent('popstate'));
+    }
 }

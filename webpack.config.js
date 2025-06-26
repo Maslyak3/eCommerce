@@ -12,13 +12,16 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
   },
-  mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
-    static: path.resolve(__dirname, 'app/dist'),
-    open: true,
-    hot: true,
+    historyApiFallback: true,
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
+    compress: true,
     port: 3000,
+    hot: true,
+    open: true
   },
   module: {
     rules: [

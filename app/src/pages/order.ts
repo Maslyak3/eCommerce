@@ -1,4 +1,4 @@
-import { cartItems } from "./cart";
+import { CartItem, cartItems } from "./cart";
 import { mainDiv } from "./login";
 import "./order.css"
 
@@ -18,15 +18,18 @@ export function renderOrderPage() {
         itemDiv.className = 'cart-item';
 
         const cartItemPhoto = document.createElement('img');
-        cartItemPhoto.src = item.masterData.current.masterVariant.images[0]?.url || "";
+        cartItemPhoto.src = item.masterData.current.masterVariant.images?.[0]?.url || "";
         cartItemPhoto.alt = item.masterData.current.name["en-GB"];
         
         const cartItemName = document.createElement('h2');
         cartItemName.textContent = item.masterData.current.name["en-GB"];
         
         const cartItemPrice = document.createElement("p");
-        const priceData = item.masterData.current.masterVariant.prices[0].value;
+        const priceData = item.masterData.current.masterVariant.prices?.[0].value;
+        if (!priceData) {
+            console.error("Price data is missing for item:", item);} else {
         cartItemPrice.textContent = `${(priceData.centAmount / 100 * quantity).toFixed(2)} ${priceData.currencyCode}`;
+            }
 
         itemDiv.append(cartItemPhoto, cartItemName, cartItemPrice);
         itemsInOrder.appendChild(itemDiv);
@@ -36,9 +39,9 @@ export function renderOrderPage() {
     
     const orderDetails = document.createElement('div');
     orderDetails.className = 'order-details';
-    const totalAmount = cartItems.reduce((sum: number, item: any) => {
+    const totalAmount = cartItems.reduce((sum: number, item: CartItem) => {
         const quantity = Math.max(item.quantity || 1);
-        const price = item.masterData.current.masterVariant.prices[0].value.centAmount || 0;
+        const price = item.masterData.current.masterVariant.prices?.[0].value.centAmount || 0;
         return sum + (price * quantity);
     }, 0);
     const totalAmountElement = document.createElement('p');

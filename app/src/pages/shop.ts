@@ -61,7 +61,7 @@ export const sideBar = document.createElement('div');
 export async function renderShopPage () {
     mainDiv.textContent = "";
 
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("acessToken");
     if (!token) {
         console.error("Access token is missing. Please login first.");
         mainDiv.textContent = "Помилка: відсутній токен доступу. Увійдіть у систему.";

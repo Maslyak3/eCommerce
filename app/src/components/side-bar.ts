@@ -1,7 +1,7 @@
 import { fetchProducts, fetchProductsByCategory} from "../api/products";
 import { renderProducts, sideBar } from "../pages/shop";
 
-const token = localStorage.getItem("accessToken");
+const token = localStorage.getItem("acessToken");
 
 interface Product {
     masterData: {

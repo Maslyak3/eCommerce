@@ -36,7 +36,7 @@ export interface Product {
 }
 
 export async function fetchProductsByCategory(categoryId: string): Promise<Product[]> {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("acessToken");
     console.log(token);
     if (!token) {
         throw new Error('No access token found');
@@ -59,7 +59,7 @@ export async function fetchProductsByCategory(categoryId: string): Promise<Produ
 }
 
 export async function fetchProducts(): Promise<Product[]> {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("acessToken");
 
     const response = await fetch(`${API_URL}/${PROJECT_KEY}/products`, {
         headers: {

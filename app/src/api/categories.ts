@@ -1,4 +1,3 @@
-import { getAccessToken } from "./auth";
 
 const API_URL = 'https://api.europe-west1.gcp.commercetools.com';
 const PROJECT_KEY = 'microworld';
@@ -16,7 +15,7 @@ interface Category {
 export async function fetchCategories(): Promise<Category[]> {
     console.log('fetch');
     
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("acessToken");
 
     const response = await fetch(`${API_URL}/${PROJECT_KEY}/categories`, {
         headers: {

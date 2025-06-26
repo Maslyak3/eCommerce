@@ -11,6 +11,7 @@ mainDiv.className = "main-div";
 export function renderLoginPage() {
     document.body.innerHTML = "";
     mainDiv.textContent = "";
+    
 
     header();
 
@@ -75,11 +76,11 @@ export function renderLoginPage() {
         const passwordValidation = validatePassword(password);
         
         if (!loginValidation && !passwordValidation) {
-               localStorage.setItem("UserLogin", login);
-                localStorage.setItem("UserPassword", password);
+               localStorage.setItem("userLogin", login);
+                localStorage.setItem("userPassword", password);
             try {
                 const token = await getAccessToken(login, password);
-                localStorage.setItem("accessToken", token);
+                localStorage.setItem("acessToken", token);
 
             await renderShopPage();
         } catch (err) {
@@ -105,7 +106,7 @@ export function renderLoginPage() {
         if (loginValidation || passwordValidation) {
             loginError.textContent = loginValidation ?? "";
             passwordError.textContent = passwordValidation ?? "";
-            displayError("Please fix the errors above.");
+            // displayError("Please fix the errors above.");
             return;
         }
 
@@ -122,30 +123,32 @@ export function renderLoginPage() {
 
             if (!tokenResponse.ok) throw new Error("Failed to get token");
             const tokenData = await tokenResponse.json();
-            const accessToken = tokenData.access_token;
+            // const accessToken = tokenData.access_token;
 
 
         const response = await fetch('https://api.europe-west1.gcp.commercetools.com/microworld/customers', {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${tokenData.access_token}`,
                 "Content-type": "application/json",
             },
             body: JSON.stringify({
-                email,
-                password,
+                email: email,
+                password: password,
+                firstName: "Customer", // Обов'язкові поля
+                lastName: "User"
             }),
         }
         );
         if (!response.ok) {
-            console.error("Failed to register");
-            return;
-        }
-        localStorage.setItem("UserLogin", email);
-        localStorage.setItem("userPassword", password);
+            const error = await response.json();
+            throw new Error(`Registration failed: ${error.message}`);
+            }
 
         const userToken = await getAccessToken(email, password);
-        localStorage.setItem("accessToken", userToken);
+
+        localStorage.setItem("acessToken", userToken);
+        localStorage.setItem("userLogin", email);
 
         await renderShopPage();
     } catch (err) {

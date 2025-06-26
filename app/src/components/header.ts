@@ -29,7 +29,7 @@ export function header() {
     const cartNavBtn = createNavButton('Cart', '/cart');
 
     // Обробка авторизації
-    const isLoggedIn = localStorage.getItem("UserLogin") && localStorage.getItem("UserPassword");
+    const isLoggedIn = localStorage.getItem("userLogin") && localStorage.getItem("userPassword");
     loginNavBtn.style.display = isLoggedIn ? "none" : "block";
     profileNavBtn.style.display = isLoggedIn ? "block" : "none";
 

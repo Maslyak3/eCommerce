@@ -1,3 +1,4 @@
+import { mainDiv } from "../pages/login";
 import { getAccessToken } from "./auth";
 
 const API_URL = 'https://api.europe-west1.gcp.commercetools.com';
@@ -37,39 +38,44 @@ export interface Product {
 
 export async function fetchProductsByCategory(categoryId: string): Promise<Product[]> {
     const token = localStorage.getItem("acessToken");
-    console.log(token);
+    let products: Product[] = [];
     if (!token) {
         throw new Error('No access token found');
     }
-
+    try {
     const response = await fetch(`${API_URL}/${PROJECT_KEY}/products?where=masterData(current(categories(id="${categoryId}")))`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
     });
-
-    console.log(response);
-    if (!response.ok) {
-        
-        throw new Error('Failde to fetch products');
-    }
+   
     const data = await response.json();
-    console.log(data);
-    return data.results;
+    
+    products = data.results;
+  } catch (error) {
+      console.error('Error fetching products:', error);
+      mainDiv.textContent = "Ви не зареєстровані";
+  }
+   return products;
 }
 
 export async function fetchProducts(): Promise<Product[]> {
     const token = localStorage.getItem("acessToken");
+    let products: Product[] = [];
 
+    try{
     const response = await fetch(`${API_URL}/${PROJECT_KEY}/products`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
     });
 
-    if (!response.ok) {
-        throw new Error('Failde to fetch products');
-    }
+    
     const data = await response.json();
-    return data.results;
+    products = data.results;
+  } catch (error) {
+      console.error('Error fetching products:', error);
+      mainDiv.textContent = "Ви не зареєстровані";
+  }
+  return products;
 }

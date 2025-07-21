@@ -19,7 +19,7 @@ interface Product {
 
 export const renderPriceControls = async () => {
         
-    const allProducts = await fetchProducts();
+    const allProducts = await fetchProducts() || [] as Product[];
     const prices: number[] = [];
 
     for (const product of allProducts) {
@@ -176,7 +176,7 @@ const fetchFilteredProducts = async (options: {
         }
 
     const queryString = searchParams.toString();
-    console.log("🔗 Запит до API:", queryString);
+    
 
     const response = await fetch(
         `https://api.europe-west1.gcp.commercetools.com/microworld/product-projections/search?${queryString}`,
@@ -189,7 +189,7 @@ const fetchFilteredProducts = async (options: {
 
     if (!response.ok) {
         const errorText = await response.text();
-        console.error("❌ API помилка:", errorText);
+        
         return [];
     }
 

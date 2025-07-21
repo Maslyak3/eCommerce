@@ -13,8 +13,7 @@ interface Category {
 
 
 export async function fetchCategories(): Promise<Category[]> {
-    console.log('fetch');
-    
+       
     const token = localStorage.getItem("acessToken");
 
     const response = await fetch(`${API_URL}/${PROJECT_KEY}/categories`, {
@@ -22,8 +21,7 @@ export async function fetchCategories(): Promise<Category[]> {
             Authorization: `Bearer ${token}`,
         },
     });
-    console.log(response);
-    if (!response.ok) {
+        if (!response.ok) {
         throw new Error("Unable to fetch categories");
     }
  

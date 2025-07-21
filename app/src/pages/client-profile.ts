@@ -4,12 +4,11 @@ import { loginInput, mainDiv, renderLoginPage } from "./login";
 const API_URL = 'https://api.europe-west1.gcp.commercetools.com/microworld/me';
 
 export async function renderProfilePage() {
-    console.log("Rendering profile page");
-    mainDiv.textContent = "";
+       mainDiv.textContent = "";
 
     const token = localStorage.getItem("acessToken");
     if (!token) {
-        mainDiv.textContent = "You are not logged in";
+        mainDiv.textContent = "Ви не авторизовані";
         return;
     }
 
@@ -18,6 +17,10 @@ export async function renderProfilePage() {
             Authorization: `Bearer ${token}`,
         },
     });
+    if (!response.ok) {
+        mainDiv.textContent = "Не вдалося отримати дані профілю";
+        return;
+    }
 
     const user = await response.json();
     const login = localStorage.getItem("userLogin");
@@ -75,80 +78,109 @@ export async function renderProfilePage() {
     saveAdressBtn.className = "submit-button";
 
     const customerId = user.id;
-    const version = user.version;
+    let version = user.version;
 
-    const address = {
-        country: "UA",
-        city: shippingCity.value,
-        streetName: shippingStreet.value,
-        building: shippingBuilding.value,
-      };
+    if (user.addresses && user.addresses.length > 0) {
+        const address = user.addresses[0];
+        shippingCity.value = address.city || "";
+        shippingStreet.value = address.streetName || "";
+        shippingBuilding.value = address.building || "";
+        clientPhone.value = user.phone || "";
+    }
 
-    async function saveAdress() {
-        
-        if (shippingCity.value && shippingStreet.value && shippingBuilding.value) {
-            labelCity.style.display = "none";
-            labelStreet.style.display = "none";
-            labelBuilding.style.display = "none";
+
+    async function saveCustomerData() {
+        try {
+            const response = await fetch(
+                `https://api.europe-west1.gcp.commercetools.com/microworld/customers/${customerId}`, 
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        version,
+                        actions: [
+                            {
+                                action: user.addresses.length ? "changeAddress" : "addAddress",
+                                ...(user.addresses?.length ? {addressId: user.addresses[0].id } : {}),
+                                address: {
+                                    country: "UA",
+                                    city: shippingCity.value,
+                                    streetName: shippingStreet.value,
+                                    building: shippingBuilding.value,
+                                    phone: clientPhone.value
+                                }
+                            }
+                        ]
+                    })
+                }
+            );
+                
+            if (!response.ok) throw new Error("Помилка збереження");
+
+            const updatedUser = await response.json();
+            version = updatedUser.version;
 
             divCity.textContent = `Місто/Село: ${shippingCity.value}`;
             divStreet.textContent = `Вулиця: ${shippingStreet.value}`;
             divBuilding.textContent = `Будинок/Квартира: ${shippingBuilding.value}`;
 
-            shippingAddress.append(divCity);
-            shippingAddress.append(divStreet);
-            shippingAddress.append(divBuilding);
+            labelCity.style.display = "none";
+            labelStreet.style.display = "none";
+            labelBuilding.style.display = "none";
+            shippingCity.style.display = "none";
+            shippingStreet.style.display = "none";
+            shippingBuilding.style.display = "none";
+            
             saveAdressBtn.textContent = "Змінити адресу";
+            console.log(saveAdressBtn.textContent)
 
-            await fetch(`https://api.europe-west1.gcp.commercetools.com/microworld/customers/${customerId}`, {
-                method: "POST",
-                headers: {
-                 Authorization: `Bearer ${token}`,
-                 "Content-type": "application/json",
-                },
-                body: JSON.stringify({
-                 version,
-                 actions: [{
-                     action: "addAddress",
-                     address,
-                 },],
-                }),
-             });
+            alert("Дані успішно збережено");
+        } catch (error) {
+            console.error("Помилка", error);
+            alert("Не вдалося зберегти дані");
         }
     }
 
-    async function changeAdress() {
-        labelCity.style.display = "block";
-            labelStreet.style.display = "block";
-            labelBuilding.style.display = "block";
-            shippingCity.style.display = "block";
-            shippingStreet.style.display = "block";
-            shippingBuilding.style.display = "block";
+
+function showEditForm() {
+    labelCity.style.display = "block";
+    labelStreet.style.display = "block";
+    labelBuilding.style.display = "block";
+    shippingCity.style.display = "block";
+    shippingStreet.style.display = "block";
+    shippingBuilding.style.display = "block";
             
-            divCity.textContent = "";
-            divStreet.textContent = "";
-            divBuilding.textContent = "";
+    divCity.textContent = "";
+    divStreet.textContent = "";
+    divBuilding.textContent = "";
             
-            saveAdressBtn.textContent = "Зберегти адресу";
+    saveAdressBtn.textContent = "Зберегти адресу";
     
-    }
+}
 
     saveAdressBtn.addEventListener("click", async (e) => {
         e.preventDefault();
+        console.log("кнопку натиснуто")
         if(saveAdressBtn.textContent === "Зберегти адресу") {
-            saveAdress()
+            await saveCustomerData()
         } else if (saveAdressBtn.textContent === "Змінити адресу") {
-            changeAdress()
+            showEditForm();
         }
                 
-    })
+    });
+ 
+              
 
     labelPhone.append(clientPhone);
     labelCity.append(shippingCity);
     labelStreet.append(shippingStreet);
     labelBuilding.append(shippingBuilding);
 
-    shippingAddress.append(labelPhone,
+    shippingAddress.append(
+        labelPhone,
         labelCity,
         labelStreet,
         labelBuilding,

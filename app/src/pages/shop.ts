@@ -6,7 +6,7 @@ import { renderPriceControls } from "../components/side-bar";
 import { renderProductPage } from "./product-card";
 
 export const renderProducts = async (products: Product[]) => {
-    console.log("🖼️ Рендеримо продукти:", products.length);
+    
     const mainSection = document.querySelector('.main-section') as HTMLElement;
     mainSection.textContent = "";
 
@@ -83,8 +83,7 @@ export async function renderShopPage () {
 
     try {
         const categories = await fetchCategories();
-        console.log(categories);
-        
+                
         const categoryList = document.createElement('ul');
         categoryList.className = "category-list";
 
@@ -114,8 +113,7 @@ export async function renderShopPage () {
     try {
         const products = await fetchProducts();
         mainSection.textContent = "";
-        console.log(products);
-        
+                
         products.forEach((product) => {
             const productCard = document.createElement('div');
             productCard.className = "product-card"

@@ -45,7 +45,7 @@ export interface CartItem {
 
 export let cartItems: CartItem[] = [];
 export function renderCartPage() {
-    console.log('Rendering cart page');
+    
     mainDiv.textContent = '';
     
    cartItems = JSON.parse(localStorage.getItem('cart') || '[]') as CartItem[];
@@ -65,8 +65,7 @@ export function renderCartPage() {
 
     
     mainDiv.append(title);
-    console.log('Елементи додані до mainDiv');
-
+    
     const cartContainer = document.createElement("div");
     cartContainer.className = "cart-container";
 
@@ -114,8 +113,7 @@ export function renderCartPage() {
         removeBtn.textContent = 'Видалити';
         removeBtn.className = 'remove-btn';
         removeBtn.addEventListener('click', () => {
-            console.log('76254261');
-            
+                        
             removeItem(item.id); 
             renderCartPage(); 
         });
@@ -160,8 +158,7 @@ export function renderCartPage() {
     }
 
     function removeItem(productId: string) {
-        console.log('removeItem');
-        
+                
         const updatedCart = cartItems.filter((item: CartItem) => item.id !== productId);
         localStorage.setItem('cart', JSON.stringify(updatedCart));
         renderCartPage();
